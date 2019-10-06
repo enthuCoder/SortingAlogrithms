@@ -21,7 +21,45 @@ public struct Sorting: SortUtils {
     public init() {}
     
     // -------  -------  -------  -------  -------  //
-    // Quick Sort
+    // BUBBLE Sort
+    // time complexity: N*N
+    // Space Complexity: N*2
+    
+    // Logic: Bubble out the lightest/heaviest element to the end of the list during each iteration
+    //        Iterate though 1-less elements in subsequent passes
+    //        https://www.youtube.com/watch?v=xli_FI7CuzA
+    // -------  -------  -------  -------  -------  //
+    public func bubbleSort(input: [Int]) -> [Int] {
+        var result: Array<Int> = input
+        for (outerIndex, _) in result.enumerated() {
+            var requiredSwap = false
+            for (innerIndex, value) in result.enumerated() {
+                if innerIndex + 1 < result.count - outerIndex {
+                    if result[innerIndex] < result[innerIndex + 1] {
+                        swap(&result, swapIndexLeft: innerIndex, swapIndexRight: innerIndex + 1)
+                        requiredSwap = true
+                    }
+                    print("\(innerIndex): \(value)")
+                }
+            }
+            if requiredSwap == false {
+                break
+            }
+        }
+        return result
+    }
+    
+    
+    // -------  -------  -------  -------  -------  //
+    // QUICK Sort
+    // It is a recursive algorithm
+    // It is a Divide-&-Conquer approach using a pivot
+    // Very efficient for large datasets
+    // Login: https://www.youtube.com/watch?v=MZaf_9IZCrc
+    
+    // Worst Case: N*N
+    // Average Case: N Log N
+
     // -------  -------  -------  -------  -------  //
 
     public func quickSort(input: inout [Int]) {
@@ -54,7 +92,14 @@ public struct Sorting: SortUtils {
     }
 
     // -------  -------  -------  -------  -------  //
-    // Insertion Sort
+    // INSERTION Sort
+    // time complexity: N*N
+    // Space Complexity: N*2
+    
+    // Logic: Work items left to right
+    //        Examine each item and compare it to items to its left
+    //        Insert the item in the correct position in the array
+    //        https://www.youtube.com/watch?v=JU767SDMDvA&t=27s
     // -------  -------  -------  -------  -------  //
 
     public func insertionSort(input: [Int]) -> [Int] {
@@ -75,7 +120,10 @@ public struct Sorting: SortUtils {
     }
 
     // -------  -------  -------  -------  -------  //
-    // Selection Sort
+    // SELECTION Sort
+    // Logic: In the same original array, maintain 2 subarrays, one is sorted and another one is unsorted.
+    //        Select the lowest element in unsorted array in each iteration and put it in sorted array
+    // https://www.youtube.com/watch?v=g-PGLbMth_g&t=5s
     // -------  -------  -------  -------  -------  //
     public func selectionSort(input: [Int]) -> [Int] {
         var result = input
@@ -100,4 +148,21 @@ public struct Sorting: SortUtils {
         return result
     }
 
+    // -------  -------  -------  -------  -------  //
+    // MERGE Sort
+    // time Complexity: n logn
+    // 
+    // -------  -------  -------  -------  -------  //
+    public func mergeSort(input: [Int], lower: Int, higher: Int) {
+        
+        if lower < higher {
+            let mid = (lower + higher) / 2
+            mergeSort(input: input, lower: lower, higher: mid)
+            mergeSort(input: input, lower: mid+1, higher: higher)
+        }
+    }
+    
+    public func merge() {
+        
+    }
 }
