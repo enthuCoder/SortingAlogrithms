@@ -33,7 +33,7 @@ public struct Sorting: SortUtils {
     public func bubbleSort(input: [Int]) -> [Int] {
         var result = input
         var requiredSwap: Bool
-
+        
         for outerLoop in 0..<input.count {
             requiredSwap = false
             // Traverse one element less after each run, as the lightest element would have bubbled out
@@ -43,6 +43,8 @@ public struct Sorting: SortUtils {
                     requiredSwap = true
                 }
             }
+            // Added for debugging
+            print("\(outerLoop): \"\(result)\"")
             if requiredSwap == false {
                 break
             }
@@ -86,6 +88,16 @@ public struct Sorting: SortUtils {
         if lowIndex < highIndex {
             
             let pi = partition(arr: &inputArr, low: lowIndex, high: highIndex)
+            // Added for debugging
+            // TODO: Fix the issue with printing all the values after each partition
+            if lowIndex < pi {
+               print("leftArray: \(inputArr[lowIndex..<pi])")
+            }
+            print("*****  pivot: \(inputArr[pi])  *****")
+            if pi+1 < highIndex {
+                print("rightArray: \(inputArr[pi+1..<highIndex])")
+            }
+            print("\n")
             
             sort(inputArr: &inputArr, lowIndex: lowIndex, highIndex: pi - 1)
             sort(inputArr: &inputArr, lowIndex: pi + 1, highIndex: highIndex)
@@ -128,6 +140,8 @@ public struct Sorting: SortUtils {
                     result.insert(removedElement, at: j)
                 }
             }
+            // Added for debugging
+            print("\(i): \"\(result)\"")
         }
         
         return result
@@ -160,6 +174,7 @@ public struct Sorting: SortUtils {
             if swapNeeded == true {
                 swap(&result, swapIndexLeft: outerIndex, swapIndexRight: swapIndex)
             }
+            print("\(outerIndex): \"\(result)\"")
             swapIndex = -1
             swapNeeded = false
         }
@@ -185,13 +200,18 @@ public struct Sorting: SortUtils {
         
         let mid = input.count / 2 // for defining the current array in 2 parts
         let leftPart = mergeSort(input: Array(input[0..<mid])) // sort the 1st part of array
+        
         let rightPart = mergeSort(input: Array(input[mid..<input.count])) // sort the 2nd part of array
         
         return merge(leftArray: leftPart, rightArray: rightPart)
     }
     
     fileprivate func merge(leftArray: [Int], rightArray: [Int]) -> [Int] {
-        
+        // added for debugging
+        print("Left Part: \(leftArray)")
+        // added for debugging
+        print("Right Part: \(rightArray)")
+
         var leftStartIndex = 0
         var rightStartIndex = 0
         
@@ -222,6 +242,9 @@ public struct Sorting: SortUtils {
             orderedArr.append(rightArray[rightStartIndex])
             rightStartIndex = rightStartIndex + 1
         }
+        // Added for debugging
+        print("Merged Array: \(orderedArr)\n")
+        
         return orderedArr
     }
 }
