@@ -30,7 +30,7 @@ public struct Sorting: SortUtils {
     //        https://www.youtube.com/watch?v=xli_FI7CuzA
     // -------  -------  -------  -------  -------  //
     
-    public func bubbleSort1(input: [Int]) -> [Int] {
+    public func bubbleSort(input: [Int]) -> [Int] {
         var result = input
         var requiredSwap: Bool
 
