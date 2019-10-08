@@ -6,7 +6,7 @@ let sorting = Sorting()
 // BUBBLE Sort
 // -------  -------  -------  -------  -------  //
 let bubbleSortInput: [Int] = [5,1,4,2,8]
-let bubSortedList = sorting.bubbleSort(input: bubbleSortInput)
+let bubSortedList = sorting.bubbleSort1(input: bubbleSortInput)
 print("\n=-=-=-=-  BUBBLE Sort  -=-=-=-=")
 print("Input=\(bubbleSortInput) ===== SortedList=\(bubSortedList)\n")
 
@@ -31,9 +31,13 @@ print("Input=\(input) ===== SortedList=\(insSortedList)\n")
 // -------  -------  -------  -------  -------  //
 var selectionSortInput: [Int] = [17, 41, 5, 22, 54, 6, 29, 3, 13]
 selectionSortInput = sorting.selectionSort(input: selectionSortInput)
-print("=-=-=-=-  Selection Sort  -=-=-=-=")
+print("=-=-=-=-  SELECTION Sort  -=-=-=-=")
 print("===== SortedList=\(selectionSortInput)\n")
 
 // -------  -------  -------  -------  -------  //
 // MERGE Sort
 // -------  -------  -------  -------  -------  //
+var mergeSortInput: [Int] = [9,7,8,3,2,1]
+mergeSortInput = sorting.mergeSort(input: mergeSortInput)
+print("=-=-=-=-  MERGE Sort  -=-=-=-=")
+print("===== SortedList=\(mergeSortInput)\n")

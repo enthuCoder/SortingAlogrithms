@@ -29,26 +29,27 @@ public struct Sorting: SortUtils {
     //        Iterate though 1-less elements in subsequent passes
     //        https://www.youtube.com/watch?v=xli_FI7CuzA
     // -------  -------  -------  -------  -------  //
-    public func bubbleSort(input: [Int]) -> [Int] {
-        var result: Array<Int> = input
-        for (outerIndex, _) in result.enumerated() {
-            var requiredSwap = false
-            for (innerIndex, value) in result.enumerated() {
-                if innerIndex + 1 < result.count - outerIndex {
-                    if result[innerIndex] < result[innerIndex + 1] {
-                        swap(&result, swapIndexLeft: innerIndex, swapIndexRight: innerIndex + 1)
-                        requiredSwap = true
-                    }
-                    print("\(innerIndex): \(value)")
+    
+    public func bubbleSort1(input: [Int]) -> [Int] {
+        var result = input
+        var requiredSwap: Bool
+
+        for outerLoop in 0..<input.count {
+            requiredSwap = false
+            // Traverse one element less after each run, as the lightest element would have bubbled out
+            for innerLoop in 0..<(input.count - outerLoop) {
+                if (innerLoop + 1 < result.count - outerLoop) && (result[innerLoop] < result[innerLoop + 1]) {
+                    swap(&result, swapIndexLeft: innerLoop, swapIndexRight: innerLoop + 1)
+                    requiredSwap = true
                 }
             }
             if requiredSwap == false {
                 break
             }
         }
+
         return result
     }
-    
     
     // -------  -------  -------  -------  -------  //
     // QUICK Sort
@@ -60,8 +61,23 @@ public struct Sorting: SortUtils {
     // Worst Case: N*N
     // Average Case: N Log N
 
+    // Logic:
+    // 1. select a pivot in unsorted array (it can be mid, or last or first element)
+    // 2. Move elements smaller than the pivot to its left, larger than the pivot to right (each iteration should move the pivot to correct position in the final sorted array)
+    // 3. Keep doing it until each partition is exhausted
     // -------  -------  -------  -------  -------  //
 
+    public func quickSort_Swifty<T: Comparable>(_ a: [T]) -> [T] {
+        guard a.count > 1 else { return a }
+        
+        let pivot = a[a.count/2]
+        let less = a.filter { $0 < pivot }
+        let equal = a.filter { $0 == pivot }
+        let greater = a.filter { $0 > pivot }
+        
+        return quickSort_Swifty(less) + equal + quickSort_Swifty(greater)
+    }
+    
     public func quickSort(input: inout [Int]) {
         sort(inputArr: &input, lowIndex: 0, highIndex: input.count-1)
     }
@@ -105,13 +121,11 @@ public struct Sorting: SortUtils {
     public func insertionSort(input: [Int]) -> [Int] {
         var result = input
         
-        for (i, _) in input[1..<input.count].enumerated() {
-            for (j, _) in input[0..<i].enumerated() {
-                print("\n i:\(i) j:\(j)")
+        for i in 1..<input.count {
+            for j in 0..<i {
                 if result[j] > result[i] {
                     let removedElement = result.remove(at: i)
                     result.insert(removedElement, at: j)
-                    print("\(i):: \(result)")
                 }
             }
         }
@@ -121,9 +135,14 @@ public struct Sorting: SortUtils {
 
     // -------  -------  -------  -------  -------  //
     // SELECTION Sort
+    // time Complexity: N * N
+    //  bubble Sort < Selection Sort < Insertion Sort
     // Logic: In the same original array, maintain 2 subarrays, one is sorted and another one is unsorted.
-    //        Select the lowest element in unsorted array in each iteration and put it in sorted array
+    //        Select the lowest element in unsorted array in each iteration and swap it with highest index element in sorted array
     // https://www.youtube.com/watch?v=g-PGLbMth_g&t=5s
+    
+    // NOTE: Heap Sort uses the same principle as selection sort but has a fast method for finding the minimum value in the rest of the array.
+    // Heap sort' performance is O(n log n)
     // -------  -------  -------  -------  -------  //
     public func selectionSort(input: [Int]) -> [Int] {
         var result = input
@@ -150,19 +169,59 @@ public struct Sorting: SortUtils {
 
     // -------  -------  -------  -------  -------  //
     // MERGE Sort
-    // time Complexity: n logn
-    // 
+    // time Complexity: N * log N (for best, worst, and average case)
+    // Space Complexity: not an in-place sort algorithm, needs an extra array of equal size as input array
+    // Goal: Sort an array in ascending order
+    // Logic:
+    // 1. Divide the array by half at a time until it can not be divide further. At this time, we will have n arrays with one element each.
+    // 2. Merge the arrays with 1 element each in ascending order to get the sorted array
+    // Reference: https://github.com/raywenderlich/swift-algorithm-club/tree/master/Merge%20Sort
     // -------  -------  -------  -------  -------  //
-    public func mergeSort(input: [Int], lower: Int, higher: Int) {
-        
-        if lower < higher {
-            let mid = (lower + higher) / 2
-            mergeSort(input: input, lower: lower, higher: mid)
-            mergeSort(input: input, lower: mid+1, higher: higher)
+    public func mergeSort(input: [Int]) -> [Int] {
+        // if there is only 1 element, return
+        guard input.count > 1 else {
+            return input
         }
+        
+        let mid = input.count / 2 // for defining the current array in 2 parts
+        let leftPart = mergeSort(input: Array(input[0..<mid])) // sort the 1st part of array
+        let rightPart = mergeSort(input: Array(input[mid..<input.count])) // sort the 2nd part of array
+        
+        return merge(leftArray: leftPart, rightArray: rightPart)
     }
     
-    public func merge() {
+    fileprivate func merge(leftArray: [Int], rightArray: [Int]) -> [Int] {
         
+        var leftStartIndex = 0
+        var rightStartIndex = 0
+        
+        var orderedArr = [Int]()
+    
+        //
+        while leftStartIndex < leftArray.count && rightStartIndex < rightArray.count {
+            if leftArray[leftStartIndex] < rightArray[rightStartIndex] {
+                orderedArr.append(leftArray[leftStartIndex])
+                leftStartIndex = leftStartIndex + 1
+            } else if rightArray[rightStartIndex] < leftArray[leftStartIndex] {
+                orderedArr.append(rightArray[rightStartIndex])
+                rightStartIndex = rightStartIndex + 1
+            } else {
+                orderedArr.append(rightArray[rightStartIndex])
+                orderedArr.append(leftArray[leftStartIndex])
+                rightStartIndex = rightStartIndex + 1
+                leftStartIndex = leftStartIndex + 1
+            }
+        }
+        // Right array is over, merge rest of the items from left array
+        while leftStartIndex < leftArray.count {
+            orderedArr.append(leftArray[leftStartIndex])
+            leftStartIndex = leftStartIndex + 1
+        }
+        // Left array is over, merge rest of the items from right array
+        while rightStartIndex < rightArray.count {
+            orderedArr.append(rightArray[rightStartIndex])
+            rightStartIndex = rightStartIndex + 1
+        }
+        return orderedArr
     }
 }
