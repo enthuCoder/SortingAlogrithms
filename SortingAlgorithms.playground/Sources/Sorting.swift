@@ -32,24 +32,16 @@ public struct Sorting: SortUtils {
     
     public func bubbleSort(input: [Int]) -> [Int] {
         var result = input
-        var requiredSwap: Bool
         
         for outerLoop in 0..<input.count {
-            requiredSwap = false
             // Traverse one element less after each run, as the lightest element would have bubbled out
             for innerLoop in 0..<(input.count - outerLoop) {
-                if (innerLoop + 1 < result.count - outerLoop) && (result[innerLoop] < result[innerLoop + 1]) {
+               // if (innerLoop + 1 < result.count) && (result[innerLoop] < result[innerLoop + 1]) { // Sort in descending order
+                  if (innerLoop + 1 < result.count) && (result[innerLoop] > result[innerLoop + 1])  { // Sort in Ascending order
                     swap(&result, swapIndexLeft: innerLoop, swapIndexRight: innerLoop + 1)
-                    requiredSwap = true
                 }
             }
-            // Added for debugging
-            print("\(outerLoop): \"\(result)\"")
-            if requiredSwap == false {
-                break
-            }
         }
-
         return result
     }
     
