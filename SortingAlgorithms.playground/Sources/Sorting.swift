@@ -27,6 +27,7 @@ public struct Sorting: SortUtils {
     
     // Logic: Bubble out the lightest/heaviest element to the end of the list during each iteration
     //        Iterate though 1-less elements in subsequent passes
+    //        Swap adjacent elements 
     //        https://www.youtube.com/watch?v=xli_FI7CuzA
     // -------  -------  -------  -------  -------  //
     
@@ -50,8 +51,8 @@ public struct Sorting: SortUtils {
     // It is a recursive algorithm
     // It is a Divide-&-Conquer approach using a pivot
     // Very efficient for large datasets
-    // Login: https://www.youtube.com/watch?v=MZaf_9IZCrc
-    
+    // Logic: https://www.youtube.com/watch?v=MZaf_9IZCrc
+    //        https://www.youtube.com/watch?v=7h1s2SojIRw
     // Worst Case: N*N
     // Average Case: N Log N
 
@@ -72,43 +73,45 @@ public struct Sorting: SortUtils {
         return quickSort_Swifty(less) + equal + quickSort_Swifty(greater)
     }
     
-    public func quickSort(input: inout [Int]) {
-        sort(inputArr: &input, lowIndex: 0, highIndex: input.count-1)
+    func swap(_ input: inout [Int], firstIndex: Int, lastIndex: Int) {
+        let firstElement = input[firstIndex]
+        input[firstIndex] = input[lastIndex]
+        input[lastIndex] = firstElement
     }
+
     
-    private func sort(inputArr: inout [Int], lowIndex: Int, highIndex: Int) {
-        if lowIndex < highIndex {
+    func partition(input: inout [Int], low: Int, high: Int) -> Int {
+        let pivot = input[low]
+        var lower = low
+        var higher = high
+        while lower < higher {
+            repeat {
+                lower += 1
+            } while (input[lower] <= pivot && lower < higher)
             
-            let pi = partition(arr: &inputArr, low: lowIndex, high: highIndex)
-            // Added for debugging
-            // TODO: Fix the issue with printing all the values after each partition
-            if lowIndex < pi {
-               print("leftArray: \(inputArr[lowIndex..<pi])")
+            while input[higher] > pivot {
+                higher -= 1
             }
-            print("*****  pivot: \(inputArr[pi])  *****")
-            if pi+1 < highIndex {
-                print("rightArray: \(inputArr[pi+1..<highIndex])")
-            }
-            print("\n")
             
-            sort(inputArr: &inputArr, lowIndex: lowIndex, highIndex: pi - 1)
-            sort(inputArr: &inputArr, lowIndex: pi + 1, highIndex: highIndex)
+            if lower < higher {
+                swap(&input, firstIndex: lower, lastIndex: higher)
+            }
         }
-    }
-    
-    private func partition(arr: inout [Int], low: Int, high: Int) -> Int {
-        var i = low - 1
-        var j = low
+        swap(&input, firstIndex: lower, lastIndex: higher)
         
-        while j < high {
-            if arr[j] < arr[high] {
-                i = i + 1
-                swap(&arr, swapIndexLeft: i, swapIndexRight: j)
-            }
-            j = j + 1
+        return higher
+    }
+
+    func quickSortHelper(input: inout [Int], l: Int, h: Int) {
+        if l < h {
+            let idx = partition(input: &input, low: l, high: h)
+            quickSortHelper(input: &input, l: l, h: idx - 1)
+            quickSortHelper(input: &input, l: idx + 1, h: h)
         }
-        arr.insert(arr.remove(at: high), at: i+1)
-        return i+1
+    }
+
+    public func quickSort(input: inout [Int]) {
+        quickSortHelper(input: &input, l: 0, h: (input.count - 1))
     }
 
     // -------  -------  -------  -------  -------  //
@@ -122,21 +125,14 @@ public struct Sorting: SortUtils {
     //        https://www.youtube.com/watch?v=JU767SDMDvA&t=27s
     // -------  -------  -------  -------  -------  //
 
-    public func insertionSort(input: [Int]) -> [Int] {
-        var result = input
-        
+    public func insertionSort(input: inout [Int]) {
         for i in 1..<input.count {
             for j in 0..<i {
-                if result[j] > result[i] {
-                    let removedElement = result.remove(at: i)
-                    result.insert(removedElement, at: j)
+                if input[i-j-1] > input[i-j] {
+                    swap(&input, swapIndexLeft:i-j-1, swapIndexRight:i-j)
                 }
             }
-            // Added for debugging
-            print("\(i): \"\(result)\"")
         }
-        
-        return result
     }
 
     // -------  -------  -------  -------  -------  //
@@ -150,28 +146,19 @@ public struct Sorting: SortUtils {
     // NOTE: Heap Sort uses the same principle as selection sort but has a fast method for finding the minimum value in the rest of the array.
     // Heap sort' performance is O(n log n)
     // -------  -------  -------  -------  -------  //
-    public func selectionSort(input: [Int]) -> [Int] {
-        var result = input
-        var swapIndex = -1
-        var swapNeeded = false
-        
-        for outerIndex in 0..<input.count {
-            swapIndex = outerIndex
-            for innerIndex in outerIndex..<input.count {
-                if result[innerIndex] < result[swapIndex] {
-                    swapIndex = innerIndex
-                    swapNeeded = true
+    public func selectionSort(input: inout [Int]) {
+        for i in 0..<input.count {
+            var minInUnsortedArr = input[i]
+            var minIdxUnsortedArr = i
+            
+            for j in i..<input.count {
+                if input[j] < minInUnsortedArr {
+                    minInUnsortedArr = input[j]
+                    minIdxUnsortedArr = j
                 }
             }
-            if swapNeeded == true {
-                swap(&result, swapIndexLeft: outerIndex, swapIndexRight: swapIndex)
-            }
-            print("\(outerIndex): \"\(result)\"")
-            swapIndex = -1
-            swapNeeded = false
+            swap(&input, swapIndexLeft: i, swapIndexRight: minIdxUnsortedArr)
         }
-        
-        return result
     }
 
     // -------  -------  -------  -------  -------  //
@@ -192,7 +179,6 @@ public struct Sorting: SortUtils {
         
         let mid = input.count / 2 // for defining the current array in 2 parts
         let leftPart = mergeSort(input: Array(input[0..<mid])) // sort the 1st part of array
-        
         let rightPart = mergeSort(input: Array(input[mid..<input.count])) // sort the 2nd part of array
         
         return merge(leftArray: leftPart, rightArray: rightPart)

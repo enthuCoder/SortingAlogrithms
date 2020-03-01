@@ -30,13 +30,13 @@ print("// -------  -------  -------  -------  -------  //\n")
 // -------  -------  -------  -------  -------  //
 // INSERTION Sort
 // -------  -------  -------  -------  -------  //
-let insertionSortInput: [Int] = [5,1,4,2,8]
+var insertionSortInput: [Int] = [5,1,4,2,8]
 print("\n// -------  -------  -------  -------  -------  //")
 print("=-=-=-=-  INSERTION Sort  -=-=-=-=")
 print("INPUT=\(insertionSortInput)")
 print("Sorting...\n")
-let insSortedList = sorting.insertionSort(input: insertionSortInput)
-print("SortedList=\(insSortedList)\n")
+sorting.insertionSort(input: &insertionSortInput)
+print("SortedList=\(insertionSortInput)\n")
 
 // -------  -------  -------  -------  -------  //
 // SELECTION Sort
@@ -46,7 +46,7 @@ print("\n// -------  -------  -------  -------  -------  //")
 print("=-=-=-=-  SELECTION Sort  -=-=-=-=")
 print("INPUT=\(selectionSortInput)")
 print("Sorting...\n")
-selectionSortInput = sorting.selectionSort(input: selectionSortInput)
+sorting.selectionSort(input: &selectionSortInput)
 print("SortedList=\(selectionSortInput)\n")
 print("// -------  -------  -------  -------  -------  //\n")
 
